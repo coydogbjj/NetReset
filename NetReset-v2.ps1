@@ -1,13 +1,23 @@
-﻿#AMOUNT OF SECONDS TO SLEEP AFTER RESETTING NETWORK CONNECTION
+#AMOUNT OF SECONDS TO SLEEP AFTER RESETTING NETWORK CONNECTION
 $seconds = "10"
 
 #DESIRED LOG PATH // THIS WILL BE CREATED IF IT DOES NOT EXIST
 $logpath = "C:\NetReset\log"
 
-#GET LIST OF ADAPTERS
-$adapters = Get-NetAdapter | Format-List Name | findstr Name
+#CREATE LOG DIRECTORY
+If(!(test-path $logpath))
+{
+New-Item -ItemType Directory -Force -Path $logpath
+Write-Host ""
+Write-Host "LOG DIRECTORY CREATED" -ForegroundColor Green
+}
+else{
+    Write-Host ""
+    Write-Host "LOG DIRECTORY EXISTS" -ForegroundColor Green
+}
 
 #PUT LIST OF INTERFACES INTO ARRAY
+$adapters = Get-NetAdapter | Format-List Name | findstr Name
 $array = $adapters -replace 'Name : ',''
 Write-Host ""
 $counter = 1
@@ -21,19 +31,6 @@ Write-Host ""
 Write-Host "ENTER INTERFACE NUMBER : " -ForegroundColor Yellow -NoNewline
 $nicin = Read-Host
 $nic = $array[$nicin - 1]
-$nic
-
-#CREATE LOG DIRECTORY
-If(!(test-path $logpath))
-{
-New-Item -ItemType Directory -Force -Path $logpath
-Write-Host ""
-Write-Host "LOG DIRECTORY CREATED" -ForegroundColor Green
-}
-else{
-    Write-Host ""
-    Write-Host "LOG DIRECTORY EXISTS" -ForegroundColor Green
-}
 
 #FOREVER WHILE LOOP TO MONITOR INTERFACE
 while($true){
@@ -55,5 +52,4 @@ while($true){
         write-host Connected -ForegroundColor Green
         Start-Sleep -Seconds 2
     }
-
 }
