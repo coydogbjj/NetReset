@@ -19,8 +19,8 @@ $array | ForEach-Object{
 #USER INPUT TO SELECT DESIRED INTERFACE FROM ARRAY LISTING
 Write-Host ""
 Write-Host "ENTER INTERFACE NUMBER : " -ForegroundColor Yellow -NoNewline
-$nic = Read-Host
-$nic = $array[$selection - 1]
+$nicin = Read-Host
+$nic = $array[$nicin - 1]
 $nic
 
 #CREATE LOG DIRECTORY
@@ -40,18 +40,18 @@ while($true){
     clear
     $test = Get-NetAdapter -Name $nic | Format-List Status | findstr Status
     $testarray = $test -replace 'Status : ',''
-    if($testarray -ne $Up){
+    if($testarray -ne "Up"){
         Restart-NetAdapter -Name "$nic"
         Start-Sleep -Seconds $seconds
         Write-Host ""
-        Write-Host "NETWORK ADAPTER IS: " -ForegroundColor Yellow
+        Write-Host "$NIC IS: " -ForegroundColor Yellow
         write-host Disconnected -ForegroundColor Red
-        Get-Date | findstr a >> $logpath\log.txt
+        Get-Date | findstr a >> $logpath\$nic.log.txt
         Start-Sleep -Seconds 2
     }
     else{
         Write-Host ""
-        Write-Host "NETWORK ADAPTER IS: " -ForegroundColor Yellow
+        Write-Host "$NIC IS: " -ForegroundColor Yellow
         write-host Connected -ForegroundColor Green
         Start-Sleep -Seconds 2
     }
